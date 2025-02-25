@@ -9,7 +9,10 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;");
+    next();
+  });  
 // Supabase setup
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
@@ -30,6 +33,45 @@ app.post('/login', async (req, res) => {
     const { session, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return res.status(400).json({ error: error.message });
     res.json({ session });
+});
+
+// Submit Compliance Form
+app.post('/submit-form', async (req, res) => {
+    const { userId, formData } = req.body;
+    const { data, error } = await supabase
+        .from('compliance_forms')
+        .insert([{ user_id: userId, form_data: formData }]);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ data });
+});
+
+// Upload PDF
+app.post('/upload', upload.single('file'), async (req, res) => {
+    const { originalname, buffer } = req.file;
+    const filePath = `uploads/${Date.now()}-${originalname}`;
+    const { data, error } = await supabase.storage.from('uploads').upload(filePath, buffer);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ url: data.publicURL });
+});
+
+
+// Submit Compliance Form
+app.post('/submit-form', async (req, res) => {
+    const { userId, formData } = req.body;
+    const { data, error } = await supabase
+        .from('compliance_forms')
+        .insert([{ user_id: userId, form_data: formData }]);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ data });
+});
+
+// Upload PDF
+app.post('/upload', upload.single('file'), async (req, res) => {
+    const { originalname, buffer } = req.file;
+    const filePath = `uploads/${Date.now()}-${originalname}`;
+    const { data, error } = await supabase.storage.from('uploads').upload(filePath, buffer);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json({ url: data.publicURL });
 });
 
 // Submit Compliance Form
