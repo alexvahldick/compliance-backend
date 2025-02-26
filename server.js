@@ -45,6 +45,30 @@ app.post('/login', async (req, res) => {
     res.json({ session });
 });
 
+app.post('/reset-password', async (req, res) => {
+    const { email } = req.body;
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: "https://compliance-backend-x0r6.onrender.com/update-password"
+    });
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.json({ message: "Password reset email sent!" });
+});
+
+app.post('/update-password', async (req, res) => {
+    const { access_token, new_password } = req.body;
+
+    const { data, error } = await supabase.auth.updateUser({
+        access_token,
+        password: new_password
+    });
+
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.json({ message: "Password updated successfully!" });
+});
 
 
 // Submit Compliance Form
