@@ -31,9 +31,14 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const { session, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    console.log("Supabase Response:", { session, error }); // 🛠 Debugging line
+
     if (error) return res.status(400).json({ error: error.message });
+
     res.json({ session });
 });
+
 
 // Submit Compliance Form
 app.post('/submit-form', async (req, res) => {
