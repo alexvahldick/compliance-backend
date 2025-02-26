@@ -29,15 +29,22 @@ app.post('/signup', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+    console.log("Login route triggered"); // 🛠 Confirm that the request is received
+    console.log("Received data:", req.body); // 🛠 Log the email & password
+
     const { email, password } = req.body;
     const { session, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    console.log("Supabase Response:", { session, error }); // 🛠 Debugging line
+    console.log("Supabase Response:", { session, error }); // 🛠 Log the exact response from Supabase
 
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) {
+        console.error("Login Error:", error.message); // 🛠 Log error if authentication fails
+        return res.status(400).json({ error: error.message });
+    }
 
     res.json({ session });
 });
+
 
 
 // Submit Compliance Form
