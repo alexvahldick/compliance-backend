@@ -1,17 +1,17 @@
 // Backend (Node.js + Express)
 // Manages authentication, form submission, and file uploads
-app.get("/health", (req, res) => {
-    res.json({ status: "ok" });
-});
+
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+});
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;");
     next();
