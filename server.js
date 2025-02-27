@@ -1,5 +1,8 @@
 // Backend (Node.js + Express)
 // Manages authentication, form submission, and file uploads
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+});
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
